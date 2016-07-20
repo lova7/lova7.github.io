@@ -1,0 +1,805 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Hexo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left 
+   page-home 
+ ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Hexo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/20/storm集成kafka/" itemprop="url">
+                  storm集成kafka
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-20T19:47:12+08:00" content="2016-07-20">
+              2016-07-20
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>官网 <a href="http://storm.apache.org/releases/1.0.1/storm-kafka.html" target="_blank" rel="external">http://storm.apache.org/releases/1.0.1/storm-kafka.html</a> <br><br>博客 <a href="http://www.tuicool.com/articles/f6RVvq" target="_blank" rel="external">http://www.tuicool.com/articles/f6RVvq</a> <br></p>
+<h1 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h1><pre><code>&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+&lt;groupId&gt;storm-study&lt;/groupId&gt;
+&lt;artifactId&gt;word-count&lt;/artifactId&gt;
+&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;packaging&gt;jar&lt;/packaging&gt;
+
+&lt;name&gt;word-count&lt;/name&gt;
+&lt;url&gt;http://maven.apache.org&lt;/url&gt;
+
+&lt;properties&gt;
+    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.storm&lt;/groupId&gt;
+        &lt;artifactId&gt;storm-core&lt;/artifactId&gt;
+        &lt;version&gt;1.0.1&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.storm&lt;/groupId&gt;
+        &lt;artifactId&gt;storm-kafka&lt;/artifactId&gt;
+        &lt;version&gt;1.0.1&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+        &lt;artifactId&gt;kafka_2.9.2&lt;/artifactId&gt;
+        &lt;version&gt;0.8.1.1&lt;/version&gt;
+        &lt;exclusions&gt;
+            &lt;exclusion&gt;
+                &lt;groupId&gt;org.apache.zookeeper&lt;/groupId&gt;
+                &lt;artifactId&gt;zookeeper&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+            &lt;exclusion&gt;
+                &lt;groupId&gt;log4j&lt;/groupId&gt;
+                &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+        &lt;/exclusions&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+    &lt;sourceDirectory&gt;src/main/java&lt;/sourceDirectory&gt;
+    &lt;finalName&gt;word-count&lt;/finalName&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+            &lt;configuration&gt;
+                &lt;descriptorRefs&gt;
+                    &lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
+                &lt;/descriptorRefs&gt;
+                &lt;archive&gt;
+                    &lt;manifest&gt;
+                        &lt;mainClass /&gt;
+                    &lt;/manifest&gt;
+                &lt;/archive&gt;
+            &lt;/configuration&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;make-assembly&lt;/id&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;single&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre><h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		<span class="comment">// kafka的zk</span></div><div class="line">	String brokerZKStr = <span class="string">"172.20.86.137:2181,172.20.86.138:2181,172.20.86.139:2181,172.20.76.37:2181,172.20.76.38:2181/jka/cluster1"</span>;</div><div class="line">	String brokerZKPath = <span class="string">"/brokers"</span>;</div><div class="line">	BrokerHosts hosts = <span class="keyword">new</span> ZkHosts(brokerZKStr, brokerZKPath);</div><div class="line">	</div><div class="line">	String topic = <span class="string">"productDetailCal"</span>;</div><div class="line">		<span class="comment">// 注册offset的zk</span></div><div class="line">	String[] offsetServerArr = &#123;<span class="string">"10.190.54.112"</span>,<span class="string">"10.190.54.114"</span>,<span class="string">"10.190.54.115"</span>,<span class="string">"10.190.54.116"</span>,<span class="string">"10.190.54.117"</span>&#125;;</div><div class="line">	List&lt;String&gt; offsetZkServerList = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">	<span class="keyword">for</span>(String zkServer : offsetServerArr) &#123;</div><div class="line">		offsetZkServerList.add(zkServer);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> offsetZkPort = <span class="number">22288</span>;</div><div class="line">	<span class="comment">//汇报offset信息的root路径</span></div><div class="line">	String offsetZkRoot = <span class="string">"/abcdef"</span>;</div><div class="line">	<span class="comment">//存储该spout id的消费offset信息,譬如以topoName来命名</span></div><div class="line">	String offsetZkId = UUID.randomUUID().toString();</div><div class="line">	SpoutConfig spoutConfig = <span class="keyword">new</span> SpoutConfig(hosts, topic, offsetZkRoot, offsetZkId);</div><div class="line">	spoutConfig.zkServers = offsetZkServerList;</div><div class="line">	spoutConfig.zkPort = offsetZkPort;</div><div class="line">	</div><div class="line">	Config conf = <span class="keyword">new</span> Config();</div><div class="line">	conf.setNumAckers(<span class="number">0</span>);</div><div class="line">	conf.setNumWorkers(<span class="number">4</span>);</div><div class="line">	</div><div class="line">	TopologyBuilder builder = <span class="keyword">new</span> TopologyBuilder();</div><div class="line">	builder.setSpout(<span class="string">"kafkaSpout"</span>, <span class="keyword">new</span> KafkaSpout(spoutConfig), <span class="number">16</span>);</div><div class="line">	builder.setBolt(<span class="string">"hello"</span>, <span class="keyword">new</span> HelloKafkaBolt(), <span class="number">8</span>).shuffleGrouping(<span class="string">"kafkaSpout"</span>);</div><div class="line">	</div><div class="line">	StormSubmitter.submitTopology(<span class="string">"kafka-test"</span>, conf, builder.createTopology());</div><div class="line">	Thread.sleep(<span class="number">60000</span>);</div><div class="line">	Map clusterConf = Utils.readStormConfig();</div><div class="line">	clusterConf.putAll(Utils.readCommandLineOpts());</div><div class="line">	Nimbus.Client client = NimbusClient.getConfiguredClient(clusterConf).getClient();</div><div class="line">	KillOptions opts = <span class="keyword">new</span> KillOptions();</div><div class="line">	opts.set_wait_secs(<span class="number">0</span>);</div><div class="line">	client.killTopologyWithOpts(<span class="string">"kafka-test"</span>, opts);</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>运行storm消息时，需要把所有依赖jar打到一个jar中，将依赖jar包放入storm结点classpath中也可，但不利于多作业情况。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/19/storm集群搭建/" itemprop="url">
+                  storm集群搭建
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-19T19:17:31+08:00" content="2016-07-19">
+              2016-07-19
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Storm简介"><a href="#Storm简介" class="headerlink" title="Storm简介"></a>Storm简介</h1><p>storm是twitter开源的实时计算框架，官网地址为 <a href="http://storm.apache.org/index.html。" target="_blank" rel="external">http://storm.apache.org/index.html。</a> 官网介绍单结点每秒可以处理百万Tuple。</p>
+<h2 id="集群搭建步骤"><a href="#集群搭建步骤" class="headerlink" title="集群搭建步骤"></a>集群搭建步骤</h2><ol>
+<li>Set up a Zookeeper cluster</li>
+<li>Install dependencies on Nimbus and worker machines</li>
+<li>Download and extract a Storm release to Nimbus and worker machines</li>
+<li>Fill in mandatory configurations into storm.yaml</li>
+<li>Launch daemons under supervision using “storm” script and a supervisor of your choice</li>
+</ol>
+<h3 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h3><p>Storm集群依赖Zookeeper资源调度，所以首先需要搭建一个Zookeeper集群。<br>Storm运行环境需要安装</p>
+<ol>
+<li>jdk 7</li>
+<li>python 2.6.6</li>
+</ol>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>将storm包解压，conf目录下的storm.yaml即为配置文件。<br> storm.cluster.mode: “distributed”<br> storm.zookeeper.servers:</p>
+<pre><code>- &quot;10.191.41.195&quot;
+- &quot;10.191.86.146&quot;
+- &quot;10.191.87.239&quot;
+- &quot;10.187.55.191&quot;
+- &quot;10.187.55.192&quot;
+</code></pre><p> nimbus.seeds: [“10.187.111.29”]<br> storm.local.dir: “/export/servers/apache-storm-1.0.1/localdir”<br> supervisor.slots.ports:</p>
+<pre><code>- 6700
+- 6701
+- 6702
+- 6703
+</code></pre><p>配置文件必须准备yaml语法，参数项起始有空格。<br>所有配置项见<a href="https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml" target="_blank" rel="external">https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml</a><br>一般还需要配置nimbus\supervisor\worker的jvm参数。</p>
+<h3 id="启停"><a href="#启停" class="headerlink" title="启停"></a>启停</h3><p>在/etc/profile添加 STORM_HOME 变量， bin目录加到PATH中<br>storm nimbus<br>storm supervisor<br>storm ui   </p>
+<p>kill `ps aux | egrep ‘(daemon.nimbus)|(storm.ui.core)’ | fgrep -v egrep | awk ‘{print $2}’`<br>kill `ps aux | fgrep storm | fgrep -v ‘fgrep’ | awk ‘{print $2}’`</p>
+<h3 id="配置HOST"><a href="#配置HOST" class="headerlink" title="配置HOST"></a>配置HOST</h3><p>storm中supervisor和nimbus的通信采用的是HOST，而非ip, 如果不配置HOST，进程间无法通信，会抛出异常。<br>java.net.UnknownHostException: host-10-187-111-29<br>    at org.apache.storm.security.auth.TBackoffConnect.retryNext(TBackoffConnect.java:64)<br>    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:56)<br>    at org.apache.storm.security.auth.ThriftClient.reconnect(ThriftClient.java:99)<br>    at org.apache.storm.security.auth.ThriftClient.<init>(ThriftClient.java:69)<br>    at org.apache.storm.utils.NimbusClient.<init>(NimbusClient.java:106)<br>    at org.apache.storm.utils.NimbusClient.getConfiguredClientAs(NimbusClient.java:78)<br>    at org.apache.storm.command.list$_main.invoke(list.clj:22)<br>    at clojure.lang.AFn.applyToHelper(AFn.java:152)<br>    at clojure.lang.AFn.applyTo(AFn.java:144)<br>    at org.apache.storm.command.list.main(Unknown Source)<br>Caused by: org.apache.storm.thrift.transport.TTransportException: java.net.UnknownHostException: host-10-187-111-29<br>    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:226)<br>    at org.apache.storm.thrift.transport.TFramedTransport.open(TFramedTransport.java:81)<br>    at org.apache.storm.security.auth.SimpleTransportPlugin.connect(SimpleTransportPlugin.java:103)<br>    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:53)<br>    … 8 more<br>Caused by: java.net.UnknownHostException: host-10-187-111-29<br>    at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)<br>    at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)<br>    at java.net.Socket.connect(Socket.java:579)<br>    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:221)<br>    … 11 more</init></init></p>
+<p>vi /etc/hosts<br>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6<br>10.187.111.29 host-10-187-111-29<br>10.187.111.32 host-10-187-111-32<br>10.187.111.35 host-10-187-111-35<br>10.187.111.29 host-10-187-111-29<br>10.187.111.34 host-10-187-111-34 </p>
+<h3 id="WEB-UI"><a href="#WEB-UI" class="headerlink" title="WEB UI"></a>WEB UI</h3><p>storm提供web页面展示集群信息，默认端口是8080</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/19/hello-world/" itemprop="url">
+                  Hello World
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-19T10:52:32+08:00" content="2016-07-19">
+              2016-07-19
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+  </section>
+
+  
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/1.jpg"
+               alt="lova" />
+          <p class="site-author-name" itemprop="name">lova</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lova</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
