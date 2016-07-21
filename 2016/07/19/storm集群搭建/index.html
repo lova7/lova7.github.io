@@ -85,27 +85,24 @@
 
 
 <meta name="description" content="Storm简介storm是twitter开源的实时计算框架，官网地址为 http://storm.apache.org/index.html。 官网介绍单结点每秒可以处理百万Tuple。
-集群搭建步骤
-Set up a Zookeeper cluster
-Install dependencies on Nimbus and worker machines
-Download and extract">
+集群搭建步骤1. Set up a Zookeeper cluster
+2. Install dependencies on Nimbus and worker machines
+3. Download and">
 <meta property="og:type" content="article">
 <meta property="og:title" content="storm集群搭建">
 <meta property="og:url" content="http://yoursite.com/2016/07/19/storm集群搭建/index.html">
 <meta property="og:site_name" content="Lova">
 <meta property="og:description" content="Storm简介storm是twitter开源的实时计算框架，官网地址为 http://storm.apache.org/index.html。 官网介绍单结点每秒可以处理百万Tuple。
-集群搭建步骤
-Set up a Zookeeper cluster
-Install dependencies on Nimbus and worker machines
-Download and extract">
-<meta property="og:updated_time" content="2016-07-19T12:26:16.000Z">
+集群搭建步骤1. Set up a Zookeeper cluster
+2. Install dependencies on Nimbus and worker machines
+3. Download and">
+<meta property="og:updated_time" content="2016-07-21T07:36:28.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="storm集群搭建">
 <meta name="twitter:description" content="Storm简介storm是twitter开源的实时计算框架，官网地址为 http://storm.apache.org/index.html。 官网介绍单结点每秒可以处理百万Tuple。
-集群搭建步骤
-Set up a Zookeeper cluster
-Install dependencies on Nimbus and worker machines
-Download and extract">
+集群搭建步骤1. Set up a Zookeeper cluster
+2. Install dependencies on Nimbus and worker machines
+3. Download and">
 
 
 
@@ -284,35 +281,78 @@ Download and extract">
 
       
         <h1 id="Storm简介"><a href="#Storm简介" class="headerlink" title="Storm简介"></a>Storm简介</h1><p>storm是twitter开源的实时计算框架，官网地址为 <a href="http://storm.apache.org/index.html。" target="_blank" rel="external">http://storm.apache.org/index.html。</a> 官网介绍单结点每秒可以处理百万Tuple。</p>
-<h2 id="集群搭建步骤"><a href="#集群搭建步骤" class="headerlink" title="集群搭建步骤"></a>集群搭建步骤</h2><ol>
-<li>Set up a Zookeeper cluster</li>
-<li>Install dependencies on Nimbus and worker machines</li>
-<li>Download and extract a Storm release to Nimbus and worker machines</li>
-<li>Fill in mandatory configurations into storm.yaml</li>
-<li>Launch daemons under supervision using “storm” script and a supervisor of your choice</li>
-</ol>
-<h3 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h3><p>Storm集群依赖Zookeeper资源调度，所以首先需要搭建一个Zookeeper集群。<br>Storm运行环境需要安装</p>
-<ol>
-<li>jdk 7</li>
-<li>python 2.6.6</li>
-</ol>
-<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>将storm包解压，conf目录下的storm.yaml即为配置文件。<br> storm.cluster.mode: “distributed”<br> storm.zookeeper.servers:</p>
-<pre><code>- &quot;10.191.41.195&quot;
-- &quot;10.191.86.146&quot;
-- &quot;10.191.87.239&quot;
-- &quot;10.187.55.191&quot;
-- &quot;10.187.55.192&quot;
-</code></pre><p> nimbus.seeds: [“10.187.111.29”]<br> storm.local.dir: “/export/servers/apache-storm-1.0.1/localdir”<br> supervisor.slots.ports:</p>
-<pre><code>- 6700
-- 6701
-- 6702
-- 6703
-</code></pre><p>配置文件必须准备yaml语法，参数项起始有空格。<br>所有配置项见<a href="https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml" target="_blank" rel="external">https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml</a><br>一般还需要配置nimbus\supervisor\worker的jvm参数。</p>
-<h3 id="启停"><a href="#启停" class="headerlink" title="启停"></a>启停</h3><p>在/etc/profile添加 STORM_HOME 变量， bin目录加到PATH中<br>storm nimbus<br>storm supervisor<br>storm ui   </p>
-<p>kill `ps aux | egrep ‘(daemon.nimbus)|(storm.ui.core)’ | fgrep -v egrep | awk ‘{print $2}’`<br>kill `ps aux | fgrep storm | fgrep -v ‘fgrep’ | awk ‘{print $2}’`</p>
-<h3 id="配置HOST"><a href="#配置HOST" class="headerlink" title="配置HOST"></a>配置HOST</h3><p>storm中supervisor和nimbus的通信采用的是HOST，而非ip, 如果不配置HOST，进程间无法通信，会抛出异常。<br>java.net.UnknownHostException: host-10-187-111-29<br>    at org.apache.storm.security.auth.TBackoffConnect.retryNext(TBackoffConnect.java:64)<br>    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:56)<br>    at org.apache.storm.security.auth.ThriftClient.reconnect(ThriftClient.java:99)<br>    at org.apache.storm.security.auth.ThriftClient.<init>(ThriftClient.java:69)<br>    at org.apache.storm.utils.NimbusClient.<init>(NimbusClient.java:106)<br>    at org.apache.storm.utils.NimbusClient.getConfiguredClientAs(NimbusClient.java:78)<br>    at org.apache.storm.command.list$_main.invoke(list.clj:22)<br>    at clojure.lang.AFn.applyToHelper(AFn.java:152)<br>    at clojure.lang.AFn.applyTo(AFn.java:144)<br>    at org.apache.storm.command.list.main(Unknown Source)<br>Caused by: org.apache.storm.thrift.transport.TTransportException: java.net.UnknownHostException: host-10-187-111-29<br>    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:226)<br>    at org.apache.storm.thrift.transport.TFramedTransport.open(TFramedTransport.java:81)<br>    at org.apache.storm.security.auth.SimpleTransportPlugin.connect(SimpleTransportPlugin.java:103)<br>    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:53)<br>    … 8 more<br>Caused by: java.net.UnknownHostException: host-10-187-111-29<br>    at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)<br>    at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)<br>    at java.net.Socket.connect(Socket.java:579)<br>    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:221)<br>    … 11 more</init></init></p>
-<p>vi /etc/hosts<br>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6<br>10.187.111.29 host-10-187-111-29<br>10.187.111.32 host-10-187-111-32<br>10.187.111.35 host-10-187-111-35<br>10.187.111.29 host-10-187-111-29<br>10.187.111.34 host-10-187-111-34 </p>
-<h3 id="WEB-UI"><a href="#WEB-UI" class="headerlink" title="WEB UI"></a>WEB UI</h3><p>storm提供web页面展示集群信息，默认端口是8080</p>
+<h2 id="集群搭建步骤"><a href="#集群搭建步骤" class="headerlink" title="集群搭建步骤"></a>集群搭建步骤</h2><pre><code>1. Set up a Zookeeper cluster
+2. Install dependencies on Nimbus and worker machines
+3. Download and extract a Storm release to Nimbus and worker machines
+4. Fill in mandatory configurations into storm.yaml
+5. Launch daemons under supervision using &quot;storm&quot; script and a supervisor of your choice
+</code></pre><h3 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h3><p>Storm集群依赖Zookeeper资源调度，所以首先需要搭建一个Zookeeper集群。</p>
+<p>Storm运行环境需要安装。</p>
+<pre><code>1. jdk 7
+2. python 2.6.6
+</code></pre><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>将storm包解压，conf目录下的storm.yaml即为配置文件。</p>
+<pre><code>storm.cluster.mode: &quot;distributed&quot;
+storm.zookeeper.servers:
+     - &quot;10.191.41.195&quot;
+     - &quot;10.191.86.146&quot;
+     - &quot;10.191.87.239&quot;
+     - &quot;10.187.55.191&quot;
+     - &quot;10.187.55.192&quot;
+
+nimbus.seeds: [&quot;10.187.111.29&quot;]
+storm.local.dir: &quot;/export/servers/apache-storm-1.0.1/localdir&quot;
+supervisor.slots.ports:
+    - 6700
+    - 6701
+    - 6702
+    - 6703
+</code></pre><p>配置文件必须准备yaml语法，参数项起始有空格。</p>
+<p>所有配置项见<a href="https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml" target="_blank" rel="external">https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml</a></p>
+<p>一般还需要配置nimbus\supervisor\worker的jvm参数。</p>
+<h3 id="启停"><a href="#启停" class="headerlink" title="启停"></a>启停</h3><p>在/etc/profile添加 STORM_HOME 变量， bin目录加到PATH中</p>
+<pre><code>storm nimbus        # 启动nimbus
+storm supervisor    # 启动supervisor
+storm ui               # 启动web ui
+
+# kill nimbus
+kill \`ps aux | egrep &apos;(daemon\.nimbus)|(storm\.ui\.core)&apos; | fgrep -v egrep | awk &apos;{print $2}&apos;\` 
+
+# kill supervisor
+kill \`ps aux | fgrep storm | fgrep -v &apos;fgrep&apos; | awk &apos;{print $2}&apos;\`
+</code></pre><h3 id="配置HOST"><a href="#配置HOST" class="headerlink" title="配置HOST"></a>配置HOST</h3><p>storm中supervisor和nimbus的通信采用的是HOST，而非ip, 如果不配置HOST，进程间无法通信，会抛出异常。</p>
+<pre><code>java.net.UnknownHostException: host-10-187-111-29
+    at org.apache.storm.security.auth.TBackoffConnect.retryNext(TBackoffConnect.java:64)
+    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:56)
+    at org.apache.storm.security.auth.ThriftClient.reconnect(ThriftClient.java:99)
+    at org.apache.storm.security.auth.ThriftClient.&lt;init&gt;(ThriftClient.java:69)
+    at org.apache.storm.utils.NimbusClient.&lt;init&gt;(NimbusClient.java:106)
+    at org.apache.storm.utils.NimbusClient.getConfiguredClientAs(NimbusClient.java:78)
+    at org.apache.storm.command.list$_main.invoke(list.clj:22)
+    at clojure.lang.AFn.applyToHelper(AFn.java:152)
+    at clojure.lang.AFn.applyTo(AFn.java:144)
+    at org.apache.storm.command.list.main(Unknown Source)
+Caused by: org.apache.storm.thrift.transport.TTransportException: java.net.UnknownHostException: host-10-187-111-29
+    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:226)
+    at org.apache.storm.thrift.transport.TFramedTransport.open(TFramedTransport.java:81)
+    at org.apache.storm.security.auth.SimpleTransportPlugin.connect(SimpleTransportPlugin.java:103)
+    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:53)
+    ... 8 more
+Caused by: java.net.UnknownHostException: host-10-187-111-29
+    at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)
+    at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+    at java.net.Socket.connect(Socket.java:579)
+    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:221)
+    ... 11 more
+</code></pre><hr>
+<pre><code>vi /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+10.187.111.29 host-10-187-111-29
+10.187.111.32 host-10-187-111-32 
+10.187.111.35 host-10-187-111-35 
+10.187.111.29 host-10-187-111-29 
+10.187.111.34 host-10-187-111-34 
+</code></pre><h3 id="WEB-UI"><a href="#WEB-UI" class="headerlink" title="WEB UI"></a>WEB UI</h3><p>storm提供web页面展示集群信息，默认端口是8080</p>
 
       
     </div>
@@ -344,6 +384,10 @@ Download and extract">
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/19/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
             
           </div>
 
@@ -419,7 +463,7 @@ Download and extract">
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -429,7 +473,7 @@ Download and extract">
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

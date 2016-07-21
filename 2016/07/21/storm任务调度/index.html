@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="storm,kafka," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -84,25 +84,40 @@
 
 
 
-<meta name="description" content="参考资料官网 http://storm.apache.org/releases/1.0.1/storm-kafka.html 博客 http://www.tuicool.com/articles/f6RVvq 
-pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+<meta name="description" content="参考资料
+官方文档http://storm.apache.org/releases/1.0.1/Storm-Scheduler.html
+网络博客 http://www.tuicool.com/articles/nq6bIn
 
-&amp;lt;groupId&amp;gt;storm-study&amp;lt;/groupId&amp;">
+4种任务调度算法
+DefaultScheduler
+IsolationScheduler
+MultitenantScheduler
+ResourceAwareSchedul">
 <meta property="og:type" content="article">
-<meta property="og:title" content="storm集成kafka">
-<meta property="og:url" content="http://yoursite.com/2016/07/20/storm集成kafka/index.html">
+<meta property="og:title" content="storm任务调度">
+<meta property="og:url" content="http://yoursite.com/2016/07/21/storm任务调度/index.html">
 <meta property="og:site_name" content="Lova">
-<meta property="og:description" content="参考资料官网 http://storm.apache.org/releases/1.0.1/storm-kafka.html 博客 http://www.tuicool.com/articles/f6RVvq 
-pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+<meta property="og:description" content="参考资料
+官方文档http://storm.apache.org/releases/1.0.1/Storm-Scheduler.html
+网络博客 http://www.tuicool.com/articles/nq6bIn
 
-&amp;lt;groupId&amp;gt;storm-study&amp;lt;/groupId&amp;">
-<meta property="og:updated_time" content="2016-07-21T07:45:04.000Z">
+4种任务调度算法
+DefaultScheduler
+IsolationScheduler
+MultitenantScheduler
+ResourceAwareSchedul">
+<meta property="og:updated_time" content="2016-07-21T08:42:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="storm集成kafka">
-<meta name="twitter:description" content="参考资料官网 http://storm.apache.org/releases/1.0.1/storm-kafka.html 博客 http://www.tuicool.com/articles/f6RVvq 
-pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+<meta name="twitter:title" content="storm任务调度">
+<meta name="twitter:description" content="参考资料
+官方文档http://storm.apache.org/releases/1.0.1/Storm-Scheduler.html
+网络博客 http://www.tuicool.com/articles/nq6bIn
 
-&amp;lt;groupId&amp;gt;storm-study&amp;lt;/groupId&amp;">
+4种任务调度算法
+DefaultScheduler
+IsolationScheduler
+MultitenantScheduler
+ResourceAwareSchedul">
 
 
 
@@ -120,7 +135,7 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
   };
 </script>
 
-  <title> storm集成kafka | Lova </title>
+  <title> storm任务调度 | Lova </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -240,7 +255,7 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
             
             
               
-                storm集成kafka
+                storm任务调度
               
             
           </h1>
@@ -252,8 +267,8 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-20T19:47:12+08:00" content="2016-07-20">
-              2016-07-20
+            <time itemprop="dateCreated" datetime="2016-07-21T16:26:57+08:00" content="2016-07-21">
+              2016-07-21
             </time>
           </span>
 
@@ -280,119 +295,29 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
       
 
       
-        <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>官网 <a href="http://storm.apache.org/releases/1.0.1/storm-kafka.html" target="_blank" rel="external">http://storm.apache.org/releases/1.0.1/storm-kafka.html</a> <br><br>博客 <a href="http://www.tuicool.com/articles/f6RVvq" target="_blank" rel="external">http://www.tuicool.com/articles/f6RVvq</a> <br></p>
-<h1 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h1><pre><code>&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-&lt;groupId&gt;storm-study&lt;/groupId&gt;
-&lt;artifactId&gt;word-count&lt;/artifactId&gt;
-&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-&lt;packaging&gt;jar&lt;/packaging&gt;
-
-&lt;name&gt;word-count&lt;/name&gt;
-&lt;url&gt;http://maven.apache.org&lt;/url&gt;
-
-&lt;properties&gt;
-    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-&lt;/properties&gt;
-
-&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.apache.storm&lt;/groupId&gt;
-        &lt;artifactId&gt;storm-core&lt;/artifactId&gt;
-        &lt;version&gt;1.0.1&lt;/version&gt;
-        &lt;scope&gt;provided&lt;/scope&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.apache.storm&lt;/groupId&gt;
-        &lt;artifactId&gt;storm-kafka&lt;/artifactId&gt;
-        &lt;version&gt;1.0.1&lt;/version&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
-        &lt;artifactId&gt;kafka_2.9.2&lt;/artifactId&gt;
-        &lt;version&gt;0.8.1.1&lt;/version&gt;
-        &lt;exclusions&gt;
-            &lt;exclusion&gt;
-                &lt;groupId&gt;org.apache.zookeeper&lt;/groupId&gt;
-                &lt;artifactId&gt;zookeeper&lt;/artifactId&gt;
-            &lt;/exclusion&gt;
-            &lt;exclusion&gt;
-                &lt;groupId&gt;log4j&lt;/groupId&gt;
-                &lt;artifactId&gt;log4j&lt;/artifactId&gt;
-            &lt;/exclusion&gt;
-        &lt;/exclusions&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;
-
-&lt;build&gt;
-    &lt;sourceDirectory&gt;src/main/java&lt;/sourceDirectory&gt;
-    &lt;finalName&gt;word-count&lt;/finalName&gt;
-    &lt;plugins&gt;
-        &lt;plugin&gt;
-            &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-            &lt;configuration&gt;
-                &lt;descriptorRefs&gt;
-                    &lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
-                &lt;/descriptorRefs&gt;
-                &lt;archive&gt;
-                    &lt;manifest&gt;
-                        &lt;mainClass /&gt;
-                    &lt;/manifest&gt;
-                &lt;/archive&gt;
-            &lt;/configuration&gt;
-            &lt;executions&gt;
-                &lt;execution&gt;
-                    &lt;id&gt;make-assembly&lt;/id&gt;
-                    &lt;phase&gt;package&lt;/phase&gt;
-                    &lt;goals&gt;
-                        &lt;goal&gt;single&lt;/goal&gt;
-                    &lt;/goals&gt;
-                &lt;/execution&gt;
-            &lt;/executions&gt;
-        &lt;/plugin&gt;
-    &lt;/plugins&gt;
-&lt;/build&gt;
-</code></pre><h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><pre><code>public static void main(String[] args) throws Exception {
-        // kafka的zk
-    String brokerZKStr = &quot;172.20.86.137:2181,172.20.86.138:2181,172.20.86.139:2181,172.20.76.37:2181,172.20.76.38:2181/jka/cluster1&quot;;
-    String brokerZKPath = &quot;/brokers&quot;;
-    BrokerHosts hosts = new ZkHosts(brokerZKStr, brokerZKPath);
-
-    String topic = &quot;productDetailCal&quot;;
-        // 注册offset的zk
-    String[] offsetServerArr = {&quot;10.190.54.112&quot;,&quot;10.190.54.114&quot;,&quot;10.190.54.115&quot;,&quot;10.190.54.116&quot;,&quot;10.190.54.117&quot;};
-    List&lt;String&gt; offsetZkServerList = new ArrayList&lt;String&gt;();
-    for(String zkServer : offsetServerArr) {
-        offsetZkServerList.add(zkServer);
-    }
-    int offsetZkPort = 22288;
-    //汇报offset信息的root路径
-    String offsetZkRoot = &quot;/abcdef&quot;;
-    //存储该spout id的消费offset信息,譬如以topoName来命名
-    String offsetZkId = UUID.randomUUID().toString();
-    SpoutConfig spoutConfig = new SpoutConfig(hosts, topic, offsetZkRoot, offsetZkId);
-    spoutConfig.zkServers = offsetZkServerList;
-    spoutConfig.zkPort = offsetZkPort;
-
-    Config conf = new Config();
-    conf.setNumAckers(0);
-    conf.setNumWorkers(4);
-
-    TopologyBuilder builder = new TopologyBuilder();
-    builder.setSpout(&quot;kafkaSpout&quot;, new KafkaSpout(spoutConfig), 16);
-    builder.setBolt(&quot;hello&quot;, new HelloKafkaBolt(), 8).shuffleGrouping(&quot;kafkaSpout&quot;);
-
-    StormSubmitter.submitTopology(&quot;kafka-test&quot;, conf, builder.createTopology());
-    Thread.sleep(60000);
-    Map clusterConf = Utils.readStormConfig();
-    clusterConf.putAll(Utils.readCommandLineOpts());
-    Nimbus.Client client = NimbusClient.getConfiguredClient(clusterConf).getClient();
-    KillOptions opts = new KillOptions();
-    opts.set_wait_secs(0);
-    client.killTopologyWithOpts(&quot;kafka-test&quot;, opts);
-}
-</code></pre><h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>运行storm消息时，需要把所有依赖jar打到一个jar中，将依赖jar包放入storm结点classpath中也可，但不利于多作业情况。</p>
-
+        <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ol>
+<li>官方文档<br><a href="http://storm.apache.org/releases/1.0.1/Storm-Scheduler.html" target="_blank" rel="external">http://storm.apache.org/releases/1.0.1/Storm-Scheduler.html</a></li>
+<li>网络博客 <a href="http://www.tuicool.com/articles/nq6bIn" target="_blank" rel="external">http://www.tuicool.com/articles/nq6bIn</a></li>
+</ol>
+<h1 id="4种任务调度算法"><a href="#4种任务调度算法" class="headerlink" title="4种任务调度算法"></a>4种任务调度算法</h1><ol>
+<li><strong>DefaultScheduler</strong></li>
+<li><strong>IsolationScheduler</strong></li>
+<li><strong>MultitenantScheduler</strong></li>
+<li><strong>ResourceAwareScheduler</strong></li>
+</ol>
+<h2 id="DefaultScheduler"><a href="#DefaultScheduler" class="headerlink" title="DefaultScheduler"></a>DefaultScheduler</h2><p><a href="http://www.cnblogs.com/jianyuan/p/4802101.html" target="_blank" rel="external">http://www.cnblogs.com/jianyuan/p/4802101.html</a></p>
+<ol>
+<li>调用cluster对象的needsSchedulingTopology方法获取需要进行任务调度的Topology集合.</li>
+<li>调用cluster的getAvailableSlots方法获取当前集群可用的slot资源（集群中还没使用的Supervisor端口），并转换为<node,port>集合(available-slots).</node,port></li>
+<li>将topology中的ExecutorDetails集合转换为<start-task-id,end-task-id>集合存入all-executors.</start-task-id,end-task-id></li>
+<li>调用get-alive-assigned-node+port-&gt;executors方法获取当前topology已经分配的资源情况，返回<node+port,executors>集合(alive-assigned).</node+port,executors></li>
+<li>调用slots-can-ressign方法对alive-assigned的slot信息进行判断，选择其中可被重新分配的slot集合并保存到can-ressign-slots变量中。</li>
+<li>计算当前Topology所能使用的全部slot的数目，topology设置的worker数目与当前available-slots数目加上can-ressign-slots数据二者的最小值(total-slots-to-use)。</li>
+<li>判断total-slots-to-use的数目是否大于当前已分配的slot数目(alive-assigned),若大于则调用bad-slots方法计算所有可能被释放的slot.</li>
+<li>调用cluster的freeSlots方法释放前面计算出来的bad-slots。</li>
+<li>调用EventScheduler的schedule-topologies-evenly方法将系统中的资源均匀分配该Topology.</li>
+</ol>
+<h2 id="IsolationScheduler"><a href="#IsolationScheduler" class="headerlink" title="IsolationScheduler"></a>IsolationScheduler</h2><h2 id="MultitenantScheduler"><a href="#MultitenantScheduler" class="headerlink" title="MultitenantScheduler"></a>MultitenantScheduler</h2><h2 id="ResourceAwareScheduler"><a href="#ResourceAwareScheduler" class="headerlink" title="ResourceAwareScheduler"></a>ResourceAwareScheduler</h2>
       
     </div>
 
@@ -411,29 +336,21 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/storm/" rel="tag">#storm</a>
-          
-            <a href="/tags/kafka/" rel="tag">#kafka</a>
-          
-        </div>
-      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/19/storm集群搭建/" rel="next" title="storm集群搭建">
-                <i class="fa fa-chevron-left"></i> storm集群搭建
+              <a href="/2016/07/21/storm-概念/" rel="next" title="storm 概念">
+                <i class="fa fa-chevron-left"></i> storm 概念
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/07/21/storm在zookeeper上结点信息/" rel="prev" title="storm在zookeeper上结点信息">
-                storm在zookeeper上结点信息 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/07/21/守护进程容灾/" rel="prev" title="守护进程容灾">
+                守护进程容灾 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -541,7 +458,7 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pom-xml"><span class="nav-number">2.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#说明"><span class="nav-number">4.</span> <span class="nav-text">说明</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4种任务调度算法"><span class="nav-number">2.</span> <span class="nav-text">4种任务调度算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DefaultScheduler"><span class="nav-number">2.1.</span> <span class="nav-text">DefaultScheduler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IsolationScheduler"><span class="nav-number">2.2.</span> <span class="nav-text">IsolationScheduler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MultitenantScheduler"><span class="nav-number">2.3.</span> <span class="nav-text">MultitenantScheduler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ResourceAwareScheduler"><span class="nav-number">2.4.</span> <span class="nav-text">ResourceAwareScheduler</span></a></li></ol></li></ol></div>
             
           </div>
         </section>

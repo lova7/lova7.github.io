@@ -230,6 +230,906 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/21/守护进程容灾/" itemprop="url">
+                  守护进程容灾
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-21T17:03:34+08:00" content="2016-07-21">
+              2016-07-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>Storm含有多种守护进程，nimbus负责调度worker，supervisor负责启动或杀死worker。</p>
+</blockquote>
+<h1 id="worker-挂掉"><a href="#worker-挂掉" class="headerlink" title="worker 挂掉"></a>worker 挂掉</h1><p>supervisor首先会尝试重启该worker, 如果启动失败或是不能发送心跳给nimbus，nimbus会重新调度worker.</p>
+<h1 id="结点挂掉"><a href="#结点挂掉" class="headerlink" title="结点挂掉"></a>结点挂掉</h1><p>该结点上所有task都将心跳超时，nimbus重新把任务分配到其他结点。</p>
+<h1 id="nimbus挂掉"><a href="#nimbus挂掉" class="headerlink" title="nimbus挂掉"></a>nimbus挂掉</h1><p>storm所有的状态都是存储在zookeeper中，所以nimbus和supervisor都是无状态的，当nimbus或supervisor挂了之后，直接重启即可。当nimbus或supervisor挂掉之后，worker会继续正常运行。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/21/storm任务调度/" itemprop="url">
+                  storm任务调度
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-21T16:26:57+08:00" content="2016-07-21">
+              2016-07-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ol>
+<li>官方文档<br><a href="http://storm.apache.org/releases/1.0.1/Storm-Scheduler.html" target="_blank" rel="external">http://storm.apache.org/releases/1.0.1/Storm-Scheduler.html</a></li>
+<li>网络博客 <a href="http://www.tuicool.com/articles/nq6bIn" target="_blank" rel="external">http://www.tuicool.com/articles/nq6bIn</a></li>
+</ol>
+<h1 id="4种任务调度算法"><a href="#4种任务调度算法" class="headerlink" title="4种任务调度算法"></a>4种任务调度算法</h1><ol>
+<li><strong>DefaultScheduler</strong></li>
+<li><strong>IsolationScheduler</strong></li>
+<li><strong>MultitenantScheduler</strong></li>
+<li><strong>ResourceAwareScheduler</strong></li>
+</ol>
+<h2 id="DefaultScheduler"><a href="#DefaultScheduler" class="headerlink" title="DefaultScheduler"></a>DefaultScheduler</h2><p><a href="http://www.cnblogs.com/jianyuan/p/4802101.html" target="_blank" rel="external">http://www.cnblogs.com/jianyuan/p/4802101.html</a></p>
+<ol>
+<li>调用cluster对象的needsSchedulingTopology方法获取需要进行任务调度的Topology集合.</li>
+<li>调用cluster的getAvailableSlots方法获取当前集群可用的slot资源（集群中还没使用的Supervisor端口），并转换为<node,port>集合(available-slots).</node,port></li>
+<li>将topology中的ExecutorDetails集合转换为<start-task-id,end-task-id>集合存入all-executors.</start-task-id,end-task-id></li>
+<li>调用get-alive-assigned-node+port-&gt;executors方法获取当前topology已经分配的资源情况，返回<node+port,executors>集合(alive-assigned).</node+port,executors></li>
+<li>调用slots-can-ressign方法对alive-assigned的slot信息进行判断，选择其中可被重新分配的slot集合并保存到can-ressign-slots变量中。</li>
+<li>计算当前Topology所能使用的全部slot的数目，topology设置的worker数目与当前available-slots数目加上can-ressign-slots数据二者的最小值(total-slots-to-use)。</li>
+<li>判断total-slots-to-use的数目是否大于当前已分配的slot数目(alive-assigned),若大于则调用bad-slots方法计算所有可能被释放的slot.</li>
+<li>调用cluster的freeSlots方法释放前面计算出来的bad-slots。</li>
+<li>调用EventScheduler的schedule-topologies-evenly方法将系统中的资源均匀分配该Topology.</li>
+</ol>
+<h2 id="IsolationScheduler"><a href="#IsolationScheduler" class="headerlink" title="IsolationScheduler"></a>IsolationScheduler</h2><h2 id="MultitenantScheduler"><a href="#MultitenantScheduler" class="headerlink" title="MultitenantScheduler"></a>MultitenantScheduler</h2><h2 id="ResourceAwareScheduler"><a href="#ResourceAwareScheduler" class="headerlink" title="ResourceAwareScheduler"></a>ResourceAwareScheduler</h2>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/21/storm-概念/" itemprop="url">
+                  storm 概念
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-21T15:31:16+08:00" content="2016-07-21">
+              2016-07-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Storm重要概念"><a href="#Storm重要概念" class="headerlink" title="Storm重要概念"></a>Storm重要概念</h1><ol>
+<li><strong>Topologies</strong></li>
+<li><strong>Streams</strong></li>
+<li><strong>Spouts</strong></li>
+<li><strong>Bolts</strong></li>
+<li><strong>Stream groupings</strong></li>
+<li><strong>Reliability</strong></li>
+<li><strong>Tasks</strong></li>
+<li><strong>Workers</strong></li>
+</ol>
+<h2 id="Topology"><a href="#Topology" class="headerlink" title="Topology"></a>Topology</h2><p><strong>Topology</strong> (拓扑结构) 相当于一个服务，通过TopologyBuilder的createTopology方法创建，由StormSubmitter提交。下面是demo。</p>
+<pre><code>TopologyBuilder builder = new TopologyBuilder();
+
+builder.setSpout(&quot;1&quot;, new TestWordSpout(true), 5);
+builder.setSpout(&quot;2&quot;, new TestWordSpout(true), 3);
+builder.setBolt(&quot;3&quot;, new TestWordCounter(), 3)
+         .fieldsGrouping(&quot;1&quot;, new Fields(&quot;word&quot;))
+         .fieldsGrouping(&quot;2&quot;, new Fields(&quot;word&quot;));
+builder.setBolt(&quot;4&quot;, new TestGlobalCount())
+         .globalGrouping(&quot;1&quot;);
+
+Map conf = new HashMap();
+conf.put(Config.TOPOLOGY_WORKERS, 4);
+
+StormSubmitter.submitTopology(&quot;mytopology&quot;, conf, builder.createTopology());
+</code></pre><p>#Streams</p>
+<p>Tuple是storm中的基本数据结构，可以包含 <strong><em>int</em></strong>、<strong><em>long</em></strong>、<strong><em>short</em></strong>、<strong><em>byte</em></strong>、<strong><em>string</em></strong>、<strong><em>double</em></strong>、<strong><em>float</em></strong>、<strong><em>boolean</em></strong>、<strong><em>byte[]</em></strong>、<strong><em>自定义可序列化类</em></strong>。Stream是由一系列的Tuple流组成的数据流，并指定Tuple各Field的name.</p>
+<p>#Spouts</p>
+<p>Spout通常读取外部数据，并将之发送到Topology中。Spout可以通多调用OutputFieldsDeclarer 的declareStream方法声明多条stream。</p>
+<p>#Bolts<br>Bolt接收Spout发送的数据，对数据进行过滤、业务处理等，也可以通过OutputFieldsDeclare声明多条Stream, 发送数据给其他Bolt。</p>
+<p>#Stream groupings<br>Spout与Bolt数据分发函数有</p>
+<pre><code>1. Shuffle grouping
+   随机发送给后续bolt的tasks，数据基本均匀
+2. Fields grouping
+   根据stream中指定field的值进行分发，相当于hash，数据均匀不能保证。
+   一般根据业务逻辑选择使用。
+3. Partial Key grouping
+    与Fields Grouping类似，但当数据不均匀时会自行均衡，慎用。
+4. All grouping
+    所有的task都会受到数据。
+5. Global grouping
+    所有数据发送给Bolt所有task中id最小的task。
+6. None grouping
+    与shuffle grouping相同
+7. Direct grouping
+    1. 意味着用户指定那个consumer的task接收数据
+    2. Spout或Bolt必须声明direct streams
+    3. 使用emitDirect方法发送数据
+8. Local or shuffle grouping
+    如果目标Bolt的一个进程中含有多个task, 数据只会发送到其中的一个task中。
+    否则，等同于shuffle grouping.
+</code></pre><p>#Reliability<br>当开启ack时，spout会追踪Tuple是否被处理，如果在指定时间内没被处理（默认30秒），spout会重发数据。涉及 ack, anchoring机制，详见<a href="http://storm.apache.org/releases/1.0.1/Guaranteeing-message-processing.html" target="_blank" rel="external">官网文档</a>。后续会写文档详述相关逻辑。</p>
+<p>#Tasks<br>TopologyBuilder创建会指定Worker、executor、task数量，storm会根据该信息进行任务分发。</p>
+<p>#Workers<br>Topology执行时的进程数。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/21/storm配置项说明/" itemprop="url">
+                  storm配置项说明
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-21T14:31:45+08:00" content="2016-07-21">
+              2016-07-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="storm重要配置项"><a href="#storm重要配置项" class="headerlink" title="storm重要配置项"></a>storm重要配置项</h1><pre><code>storm.zookeeper.servers            ZooKeeper服务器列表
+storm.zookeeper.port            ZooKeeper连接端口
+storm.local.dir                    storm使用的本地文件系统目录(必须存在并且storm进程可读写)
+nimbus.seeds : [&quot;localhost&quot;]    nimbus主机地址
+nimbus.childopts                通过storm-deploy项目部署时指定给nimbus进程的jvm选项
+supervisor.slots.ports            supervisor上能够运行workers的端口列表.每个worker占用一个端口,且每个端口只运行一个worker.通过这项配置可以调整每台机器上运行的worker数.(调整slot数/每机)
+supervisor.childopts            在storm-deploy项目中使用,用来配置supervisor守护进程的jvm选项
+worker.childopts                supervisor启动worker时使用的jvm选项.所有的”%ID%”字串会被替换为对应worker的标识符
+topology.message.timeout.secs    topology中spout发送消息的最大处理超时时间.如果一条消息在该时间窗口内未被成功ack,Storm会告知spout这条消息失败。而部分spout实现了失败消息重播功能。
+topology.max.spout.pending        一个spout task中处于pending状态的最大的tuples数量.该配置应用于单个task,而不是整个spouts或topology.
+</code></pre><h1 id="如何覆盖storm默认配置"><a href="#如何覆盖storm默认配置" class="headerlink" title="如何覆盖storm默认配置"></a>如何覆盖storm默认配置</h1><pre><code>1. 在storm.yaml覆盖默认值
+2. StormSubmitter提交任务时需传入一个HashMap，但只能覆盖TOPOLOGY开头的配置项，一般用 org.apache.storm.Config 类。
+3. 重写Spout和Bolt的getComponentConfiguration方法，在Map中添加需覆盖的配置项，是Component级别的。
+4. TopologyBuilder的setSpout和setBolt函数返回的对象，调用addConfiguration或addConfigurations方法，是Component级别的。
+</code></pre><h1 id="storm1-1-0-1-默认配置"><a href="#storm1-1-0-1-默认配置" class="headerlink" title="storm1-1.0.1 默认配置"></a>storm1-1.0.1 默认配置</h1><pre><code># Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# &quot;License&quot;); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+########### These all have default values as shown
+########### Additional configuration goes into storm.yaml
+java.library.path: &quot;/usr/local/lib:/opt/local/lib:/usr/lib&quot;
+### storm.* configs are general configurations
+# the local dir is where jars are kept
+storm.local.dir: &quot;storm-local&quot;
+storm.log4j2.conf.dir: &quot;log4j2&quot;
+storm.zookeeper.servers:
+    - &quot;localhost&quot;
+storm.zookeeper.port: 2181
+storm.zookeeper.root: &quot;/storm&quot;
+storm.zookeeper.session.timeout: 20000
+storm.zookeeper.connection.timeout: 15000
+storm.zookeeper.retry.times: 5
+storm.zookeeper.retry.interval: 1000
+storm.zookeeper.retry.intervalceiling.millis: 30000
+storm.zookeeper.auth.user: null
+storm.zookeeper.auth.password: null
+storm.exhibitor.port: 8080
+storm.exhibitor.poll.uripath: &quot;/exhibitor/v1/cluster/list&quot;
+storm.cluster.mode: &quot;distributed&quot; # can be distributed or local
+storm.local.mode.zmq: false
+storm.thrift.transport: &quot;org.apache.storm.security.auth.SimpleTransportPlugin&quot;
+storm.principal.tolocal: &quot;org.apache.storm.security.auth.DefaultPrincipalToLocal&quot;
+storm.group.mapping.service: &quot;org.apache.storm.security.auth.ShellBasedGroupsMapping&quot;
+storm.group.mapping.service.params: null
+storm.messaging.transport: &quot;org.apache.storm.messaging.netty.Context&quot;
+storm.nimbus.retry.times: 5
+storm.nimbus.retry.interval.millis: 2000
+storm.nimbus.retry.intervalceiling.millis: 60000
+storm.auth.simple-white-list.users: []
+storm.auth.simple-acl.users: []
+storm.auth.simple-acl.users.commands: []
+storm.auth.simple-acl.admins: []
+storm.cluster.state.store: &quot;org.apache.storm.cluster_state.zookeeper_state_factory&quot;
+storm.meta.serialization.delegate: &quot;org.apache.storm.serialization.GzipThriftSerializationDelegate&quot;
+storm.codedistributor.class: &quot;org.apache.storm.codedistributor.LocalFileSystemCodeDistributor&quot;
+storm.workers.artifacts.dir: &quot;workers-artifacts&quot;
+storm.health.check.dir: &quot;healthchecks&quot;
+storm.health.check.timeout.ms: 5000
+### nimbus.* configs are for the master
+nimbus.seeds : [&quot;localhost&quot;]
+nimbus.thrift.port: 6627
+nimbus.thrift.threads: 64
+nimbus.thrift.max_buffer_size: 1048576
+nimbus.childopts: &quot;-Xmx1024m&quot;
+nimbus.task.timeout.secs: 30
+nimbus.supervisor.timeout.secs: 60
+nimbus.monitor.freq.secs: 10
+nimbus.cleanup.inbox.freq.secs: 600
+nimbus.inbox.jar.expiration.secs: 3600
+nimbus.code.sync.freq.secs: 120
+nimbus.task.launch.secs: 120
+nimbus.file.copy.expiration.secs: 600
+nimbus.topology.validator: &quot;org.apache.storm.nimbus.DefaultTopologyValidator&quot;
+topology.min.replication.count: 1
+topology.max.replication.wait.time.sec: 60
+nimbus.credential.renewers.freq.secs: 600
+nimbus.impersonation.authorizer: &quot;org.apache.storm.security.auth.authorizer.ImpersonationAuthorizer&quot;
+nimbus.queue.size: 100000
+scheduler.display.resource: false
+### ui.* configs are for the master
+ui.host: 0.0.0.0
+ui.port: 8080
+ui.childopts: &quot;-Xmx768m&quot;
+ui.actions.enabled: true
+ui.filter: null
+ui.filter.params: null
+ui.users: null
+ui.header.buffer.bytes: 4096
+ui.http.creds.plugin: org.apache.storm.security.auth.DefaultHttpCredentialsPlugin
+logviewer.port: 8000
+logviewer.childopts: &quot;-Xmx128m&quot;
+logviewer.cleanup.age.mins: 10080
+logviewer.appender.name: &quot;A1&quot;
+logviewer.max.sum.worker.logs.size.mb: 4096
+logviewer.max.per.worker.logs.size.mb: 2048
+logs.users: null
+drpc.port: 3772
+drpc.worker.threads: 64
+drpc.max_buffer_size: 1048576
+drpc.queue.size: 128
+drpc.invocations.port: 3773
+drpc.invocations.threads: 64
+drpc.request.timeout.secs: 600
+drpc.childopts: &quot;-Xmx768m&quot;
+drpc.http.port: 3774
+drpc.https.port: -1
+drpc.https.keystore.password: &quot;&quot;
+drpc.https.keystore.type: &quot;JKS&quot;
+drpc.http.creds.plugin: org.apache.storm.security.auth.DefaultHttpCredentialsPlugin
+drpc.authorizer.acl.filename: &quot;drpc-auth-acl.yaml&quot;
+drpc.authorizer.acl.strict: false
+transactional.zookeeper.root: &quot;/transactional&quot;
+transactional.zookeeper.servers: null
+transactional.zookeeper.port: null
+## blobstore configs
+supervisor.blobstore.class: &quot;org.apache.storm.blobstore.NimbusBlobStore&quot;
+supervisor.blobstore.download.thread.count: 5
+supervisor.blobstore.download.max_retries: 3
+supervisor.localizer.cache.target.size.mb: 10240
+supervisor.localizer.cleanup.interval.ms: 600000
+nimbus.blobstore.class: &quot;org.apache.storm.blobstore.LocalFsBlobStore&quot;
+nimbus.blobstore.expiration.secs: 600
+storm.blobstore.inputstream.buffer.size.bytes: 65536
+client.blobstore.class: &quot;org.apache.storm.blobstore.NimbusBlobStore&quot;
+storm.blobstore.replication.factor: 3
+### supervisor.* configs are for node supervisors
+# Define the amount of workers that can be run on this machine. Each worker is assigned a port to use for communication
+supervisor.slots.ports:
+    - 6700
+    - 6701
+    - 6702
+    - 6703
+supervisor.childopts: &quot;-Xmx256m&quot;
+supervisor.run.worker.as.user: false
+#how long supervisor will wait to ensure that a worker process is started
+supervisor.worker.start.timeout.secs: 120
+#how long between heartbeats until supervisor considers that worker dead and tries to restart it
+supervisor.worker.timeout.secs: 30
+#how many seconds to sleep for before shutting down threads on worker
+supervisor.worker.shutdown.sleep.secs: 1
+#how frequently the supervisor checks on the status of the processes it&apos;s monitoring and restarts if necessary
+supervisor.monitor.frequency.secs: 3
+#how frequently the supervisor heartbeats to the cluster state (for nimbus)
+supervisor.heartbeat.frequency.secs: 5
+supervisor.enable: true
+supervisor.supervisors: []
+supervisor.supervisors.commands: []
+supervisor.memory.capacity.mb: 3072.0
+#By convention 1 cpu core should be about 100, but this can be adjusted if needed
+# using 100 makes it simple to set the desired value to the capacity measurement
+# for single threaded bolts
+supervisor.cpu.capacity: 400.0
+### worker.* configs are for task workers
+worker.heap.memory.mb: 768
+worker.childopts: &quot;-Xmx%HEAP-MEM%m -XX:+PrintGCDetails -Xloggc:artifacts/gc.log -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=1M -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=artifacts/heapdump&quot;
+worker.gc.childopts: &quot;&quot;
+# Unlocking commercial features requires a special license from Oracle.
+# See http://www.oracle.com/technetwork/java/javase/terms/products/index.html
+# For this reason, profiler features are disabled by default.
+worker.profiler.enabled: false
+worker.profiler.childopts: &quot;-XX:+UnlockCommercialFeatures -XX:+FlightRecorder&quot;
+worker.profiler.command: &quot;flight.bash&quot;
+worker.heartbeat.frequency.secs: 1
+# check whether dynamic log levels can be reset from DEBUG to INFO in workers
+worker.log.level.reset.poll.secs: 30
+# control how many worker receiver threads we need per worker
+topology.worker.receiver.thread.count: 1
+task.heartbeat.frequency.secs: 3
+task.refresh.poll.secs: 10
+task.credentials.poll.secs: 30
+# now should be null by default
+topology.backpressure.enable: true
+backpressure.disruptor.high.watermark: 0.9
+backpressure.disruptor.low.watermark: 0.4
+zmq.threads: 1
+zmq.linger.millis: 5000
+zmq.hwm: 0
+storm.messaging.netty.server_worker_threads: 1
+storm.messaging.netty.client_worker_threads: 1
+storm.messaging.netty.buffer_size: 5242880 #5MB buffer
+# Since nimbus.task.launch.secs and supervisor.worker.start.timeout.secs are 120, other workers should also wait at least that long before giving up on connecting to the other worker. The reconnection period need also be bigger than storm.zookeeper.session.timeout(default is 20s), so that we can abort the reconnection when the target worker is dead.
+storm.messaging.netty.max_retries: 300
+storm.messaging.netty.max_wait_ms: 1000
+storm.messaging.netty.min_wait_ms: 100
+# If the Netty messaging layer is busy(netty internal buffer not writable), the Netty client will try to batch message as more as possible up to the size of storm.messaging.netty.transfer.batch.size bytes, otherwise it will try to flush message as soon as possible to reduce latency.
+storm.messaging.netty.transfer.batch.size: 262144
+# Sets the backlog value to specify when the channel binds to a local address
+storm.messaging.netty.socket.backlog: 500
+# By default, the Netty SASL authentication is set to false. Users can override and set it true for a specific topology.
+storm.messaging.netty.authentication: false
+# Default plugin to use for automatic network topology discovery
+storm.network.topography.plugin: org.apache.storm.networktopography.DefaultRackDNSToSwitchMapping
+# default number of seconds group mapping service will cache user group
+storm.group.mapping.service.cache.duration.secs: 120
+### topology.* configs are for specific executing storms
+topology.enable.message.timeouts: true
+topology.debug: false
+topology.workers: 1
+topology.acker.executors: null
+topology.eventlogger.executors: 0
+topology.tasks: null
+# maximum amount of time a message has to complete before it&apos;s considered failed
+topology.message.timeout.secs: 30
+topology.multilang.serializer: &quot;org.apache.storm.multilang.JsonSerializer&quot;
+topology.shellbolt.max.pending: 100
+topology.skip.missing.kryo.registrations: false
+topology.max.task.parallelism: null
+topology.max.spout.pending: null
+topology.state.synchronization.timeout.secs: 60
+topology.stats.sample.rate: 0.05
+topology.builtin.metrics.bucket.size.secs: 60
+topology.fall.back.on.java.serialization: true
+topology.worker.childopts: null
+topology.worker.logwriter.childopts: &quot;-Xmx64m&quot;
+topology.executor.receive.buffer.size: 1024 #batched
+topology.executor.send.buffer.size: 1024 #individual messages
+topology.transfer.buffer.size: 1024 # batched
+topology.tick.tuple.freq.secs: null
+topology.worker.shared.thread.pool.size: 4
+topology.spout.wait.strategy: &quot;org.apache.storm.spout.SleepSpoutWaitStrategy&quot;
+topology.sleep.spout.wait.strategy.time.ms: 1
+topology.error.throttle.interval.secs: 10
+topology.max.error.report.per.interval: 5
+topology.kryo.factory: &quot;org.apache.storm.serialization.DefaultKryoFactory&quot;
+topology.tuple.serializer: &quot;org.apache.storm.serialization.types.ListDelegateSerializer&quot;
+topology.trident.batch.emit.interval.millis: 500
+topology.testing.always.try.serialize: false
+topology.classpath: null
+topology.environment: null
+topology.bolts.outgoing.overflow.buffer.enable: false
+topology.disruptor.wait.timeout.millis: 1000
+topology.disruptor.batch.size: 100
+topology.disruptor.batch.timeout.millis: 1
+topology.disable.loadaware: false
+topology.state.checkpoint.interval.ms: 1000
+# Configs for Resource Aware Scheduler
+# topology priority describing the importance of the topology in decreasing importance starting from 0 (i.e. 0 is the highest priority and the priority importance decreases as the priority number increases).
+# Recommended range of 0-29 but no hard limit set.
+topology.priority: 29
+topology.component.resources.onheap.memory.mb: 128.0
+topology.component.resources.offheap.memory.mb: 0.0
+topology.component.cpu.pcore.percent: 10.0
+topology.worker.max.heap.size.mb: 768.0
+topology.scheduler.strategy: &quot;org.apache.storm.scheduler.resource.strategies.scheduling.DefaultResourceAwareStrategy&quot;
+resource.aware.scheduler.eviction.strategy: &quot;org.apache.storm.scheduler.resource.strategies.eviction.DefaultEvictionStrategy&quot;
+resource.aware.scheduler.priority.strategy: &quot;org.apache.storm.scheduler.resource.strategies.priority.DefaultSchedulingPriorityStrategy&quot;
+dev.zookeeper.path: &quot;/tmp/dev-storm-zookeeper&quot;
+pacemaker.host: &quot;localhost&quot;
+pacemaker.port: 6699
+pacemaker.base.threads: 10
+pacemaker.max.threads: 50
+pacemaker.thread.timeout: 10
+pacemaker.childopts: &quot;-Xmx1024m&quot;
+pacemaker.auth.method: &quot;NONE&quot;
+pacemaker.kerberos.users: []
+#default storm daemon metrics reporter plugins
+storm.daemon.metrics.reporter.plugins:
+    - &quot;org.apache.storm.daemon.metrics.reporters.JmxPreparableReporter&quot;
+</code></pre><h1 id="storm-0-9-X-配置项说明"><a href="#storm-0-9-X-配置项说明" class="headerlink" title="storm-0.9.X 配置项说明"></a>storm-0.9.X 配置项说明</h1><pre><code>配置项    配置说明
+storm.zookeeper.servers    ZooKeeper服务器列表
+storm.zookeeper.port    ZooKeeper连接端口
+storm.local.dir    storm使用的本地文件系统目录(必须存在并且storm进程可读写)
+storm.cluster.mode    Storm集群运行模式([distributed|local])
+storm.local.mode.zmq    Local模式下是否使用ZeroMQ作消息系统，如果设置为false则使用java消息系统。默认为false
+storm.zookeeper.root    ZooKeeper中Storm的根目录位置
+storm.zookeeper.session.timeout    客户端连接ZooKeeper超时时间
+storm.id    运行中拓扑的id,由storm name和一个唯一随机数组成。
+nimbus.host    nimbus服务器地址
+nimbus.thrift.port    nimbus的thrift监听端口
+nimbus.childopts    通过storm-deploy项目部署时指定给nimbus进程的jvm选项
+nimbus.task.timeout.secs    心跳超时时间，超时后nimbus会认为task死掉并重分配给另一个地址。
+nimbus.monitor.freq.secs    nimbus检查心跳和重分配任务的时间间隔.注意如果是机器宕掉nimbus会立即接管并处理。
+nimbus.supervisor.timeout.secs    supervisor的心跳超时时间,一旦超过nimbus会认为该supervisor已死并停止为它分发新任务.
+nimbus.task.launch.secs    task启动时的一个特殊超时设置.在启动后第一次心跳前会使用该值来临时替代nimbus.task.timeout.secs.
+nimbus.reassign    当发现task失败时nimbus是否重新分配执行。默认为真，不建议修改。
+nimbus.file.copy.expiration.secs    nimbus判断上传/下载链接的超时时间，当空闲时间超过该设定时nimbus会认为链接死掉并主动断开
+ui.port    Storm UI的服务端口
+drpc.servers    DRPC服务器列表，以便DRPCSpout知道和谁通讯
+drpc.port    Storm DRPC的服务端口
+supervisor.slots.ports    supervisor上能够运行workers的端口列表.每个worker占用一个端口,且每个端口只运行一个worker.通过这项配置可以调整每台机器上运行的worker数.(调整slot数/每机)
+supervisor.childopts    在storm-deploy项目中使用,用来配置supervisor守护进程的jvm选项
+supervisor.worker.timeout.secs    supervisor中的worker心跳超时时间,一旦超时supervisor会尝试重启worker进程.
+supervisor.worker.start.timeout.secs    supervisor初始启动时，worker的心跳超时时间，当超过该时间supervisor会尝试重启worker。因为JVM初始启动和配置会带来的额外消耗，从而使得第一次心跳会超过supervisor.worker.timeout.secs的设定
+supervisor.enable    supervisor是否应当运行分配给他的workers.默认为true,该选项用来进行Storm的单元测试,一般不应修改.
+supervisor.heartbeat.frequency.secs    supervisor心跳发送频率(多久发送一次)
+supervisor.monitor.frequency.secs    supervisor检查worker心跳的频率
+worker.childopts    supervisor启动worker时使用的jvm选项.所有的”%ID%”字串会被替换为对应worker的标识符
+worker.heartbeat.frequency.secs    worker的心跳发送时间间隔
+task.heartbeat.frequency.secs    task汇报状态心跳时间间隔
+task.refresh.poll.secs    task与其他tasks之间链接同步的频率.(如果task被重分配,其他tasks向它发送消息需要刷新连接).一般来讲，重分配发生时其他tasks会理解得到通知。该配置仅仅为了防止未通知的情况。
+topology.debug    如果设置成true，Storm将记录发射的每条信息。
+topology.optimize    master是否在合适时机通过在单个线程内运行多个task以达到优化topologies的目的.
+topology.workers    执行该topology集群中应当启动的进程数量.每个进程内部将以线程方式执行一定数目的tasks.topology的组件结合该参数和并行度提示来优化性能
+topology.ackers    topology中启动的acker任务数.Acker保存由spout发送的tuples的记录，并探测tuple何时被完全处理.当Acker探测到tuple被处理完毕时会向spout发送确认信息.通常应当根据topology的吞吐量来确定acker的数目，但一般不需要太多.当设置为0时,相当于禁用了消息可靠性,storm会在spout发送tuples后立即进行确认.
+topology.message.timeout.secs    topology中spout发送消息的最大处理超时时间.如果一条消息在该时间窗口内未被成功ack,Storm会告知spout这条消息失败。而部分spout实现了失败消息重播功能。
+topology.kryo.register    注册到Kryo(Storm底层的序列化框架)的序列化方案列表.序列化方案可以是一个类名,或者是com.esotericsoftware.kryo.Serializer的实现.
+topology.skip.missing.kryo.registrations    Storm是否应该跳过它不能识别的kryo序列化方案.如果设置为否task可能会装载失败或者在运行时抛出错误.
+topology.max.task.parallelism    在一个topology中能够允许的最大组件并行度.该项配置主要用在本地模式中测试线程数限制.
+topology.max.spout.pending    一个spout task中处于pending状态的最大的tuples数量.该配置应用于单个task,而不是整个spouts或topology.
+topology.state.synchronization.timeout.secs    组件同步状态源的最大超时时间(保留选项,暂未使用)
+topology.stats.sample.rate    用来产生task统计信息的tuples抽样百分比
+topology.fall.back.on.java.serialization    topology中是否使用java的序列化方案
+zmq.threads    每个worker进程内zeromq通讯用到的线程数
+zmq.linger.millis    当连接关闭时,链接尝试重新发送消息到目标主机的持续时长.这是一个不常用的高级选项,基本上可以忽略.
+java.library.path    JVM启动(如Nimbus,Supervisor和workers)时的java.library.path设置.该选项告诉JVM在哪些路径下定位本地库.
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/21/storm在zookeeper上结点信息/" itemprop="url">
+                  storm在zookeeper上结点信息
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-21T11:36:48+08:00" content="2016-07-21">
+              2016-07-21
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>/-{storm-zk-root}           -- storm在zookeeper上的根目录(默认为/storm)
+  |-/assignments            -- topology的任务分配信息
+  |   |
+  |   |-/{topology-id}      --  这个目录保存的是每个topology的assignments信息包括：对应的nimbus上
+  |                         --  的代码目录,所有task的启动时间,每个task与机器、端口的映射。操作为
+  |                         --  (assignments)来获取所有assignments的值；以及(assignment-info storm-id)
+  |                         --  来得到给定的storm-id对应的AssignmentInfo信息
+  |                         --  在AssignmentInfo中存储的内容有:
+  |                         --  :executor-&gt;node+port :executor-&gt;start-time-secs :node-&gt;host
+  |                         --  具体定义在common.clj中的
+  |                         --  (defrecord Assignment[master-code-dir node-&gt;host executor-&gt;node+port executor-&gt;start-time-secs])                        
+  |-/storms                 -- 这个目录保存所有正在运行的topology的id
+  |   |
+  |   |
+  |   |-/{topology-id}      -- 这个文件保存这个topology的一些信息，包括topology的名字，topology开始运行
+  |                         -- 的时间以及这个topology的状态。操作(active-storms),获得当前路径活跃的下
+  |                         -- topology数据。保存的内容参考类StormBase；(storm-base storm-id)得到给定的
+  |                         -- storm-id下的StormBase数据,具体定义在common.clj中的
+  |                          -- (defrecord StormBase [storm-name launch-time-secs status num-workers component-&gt;executors])
+  |-/supervisors            -- 这个目录保存所有的supervisor的心跳信息
+  |   |-/{supervisor-id}    -- 这个文件保存supervisor的心跳信息包括:心跳时间，主机名，这个supervisor上
+  |                         -- worker的端口号，运行时间(具体看SupervisorInfo类)。操作(supervisors)得到
+  |                         -- 所有的supervisors节点；(supervisor-info supervisor-id)得到给定的
+  |                         -- supervisor-id对应的SupervisorInfo信息；具体定义在common.clj中的
+  |                           -- (defrecord SupervisorInfo [time-secs hostname assignment-id used-ports meta scheduler-meta uptime-secs])
+  |-/workerbeats                    -- 所有worker的心跳
+  |   |-/{topology-id}              -- 这个目录保存这个topology的所有的worker的心跳信息
+  |       |-/{supervisorId-port}    -- worker的心跳信息，包括心跳的时间，worker运行时间以及一些统计信息
+  |                                 -- 操作(heartbeat-storms)得到所有有心跳数据的topology，
+  |                                 -- (get-worker-heartbeat storm-id node port)得到具体一个topology下
+  |                                 -- 的某个worker(node:port)的心跳状况，
+  |                                 -- (executor-beats storm-id executor-&gt;node+port)得到一个executor的心跳状况
+  |-/errors                  -- 所有产生的error信息
+  |-/{topology-id}           -- 这个目录保存这个topology下面的错误信息。操作(error-topologies)得到出错
+      |                      -- 的topology；(errors storm-id component-id)得到
+      |                      -- 给定的storm-id component-id下的出错信息
+      |-/{component-id}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/20/storm集成kafka/" itemprop="url">
                   storm集成kafka
                 </a>
@@ -346,8 +1246,46 @@
         &lt;/plugin&gt;
     &lt;/plugins&gt;
 &lt;/build&gt;
-</code></pre><h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		<span class="comment">// kafka的zk</span></div><div class="line">	String brokerZKStr = <span class="string">"172.20.86.137:2181,172.20.86.138:2181,172.20.86.139:2181,172.20.76.37:2181,172.20.76.38:2181/jka/cluster1"</span>;</div><div class="line">	String brokerZKPath = <span class="string">"/brokers"</span>;</div><div class="line">	BrokerHosts hosts = <span class="keyword">new</span> ZkHosts(brokerZKStr, brokerZKPath);</div><div class="line">	</div><div class="line">	String topic = <span class="string">"productDetailCal"</span>;</div><div class="line">		<span class="comment">// 注册offset的zk</span></div><div class="line">	String[] offsetServerArr = &#123;<span class="string">"10.190.54.112"</span>,<span class="string">"10.190.54.114"</span>,<span class="string">"10.190.54.115"</span>,<span class="string">"10.190.54.116"</span>,<span class="string">"10.190.54.117"</span>&#125;;</div><div class="line">	List&lt;String&gt; offsetZkServerList = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">	<span class="keyword">for</span>(String zkServer : offsetServerArr) &#123;</div><div class="line">		offsetZkServerList.add(zkServer);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> offsetZkPort = <span class="number">22288</span>;</div><div class="line">	<span class="comment">//汇报offset信息的root路径</span></div><div class="line">	String offsetZkRoot = <span class="string">"/abcdef"</span>;</div><div class="line">	<span class="comment">//存储该spout id的消费offset信息,譬如以topoName来命名</span></div><div class="line">	String offsetZkId = UUID.randomUUID().toString();</div><div class="line">	SpoutConfig spoutConfig = <span class="keyword">new</span> SpoutConfig(hosts, topic, offsetZkRoot, offsetZkId);</div><div class="line">	spoutConfig.zkServers = offsetZkServerList;</div><div class="line">	spoutConfig.zkPort = offsetZkPort;</div><div class="line">	</div><div class="line">	Config conf = <span class="keyword">new</span> Config();</div><div class="line">	conf.setNumAckers(<span class="number">0</span>);</div><div class="line">	conf.setNumWorkers(<span class="number">4</span>);</div><div class="line">	</div><div class="line">	TopologyBuilder builder = <span class="keyword">new</span> TopologyBuilder();</div><div class="line">	builder.setSpout(<span class="string">"kafkaSpout"</span>, <span class="keyword">new</span> KafkaSpout(spoutConfig), <span class="number">16</span>);</div><div class="line">	builder.setBolt(<span class="string">"hello"</span>, <span class="keyword">new</span> HelloKafkaBolt(), <span class="number">8</span>).shuffleGrouping(<span class="string">"kafkaSpout"</span>);</div><div class="line">	</div><div class="line">	StormSubmitter.submitTopology(<span class="string">"kafka-test"</span>, conf, builder.createTopology());</div><div class="line">	Thread.sleep(<span class="number">60000</span>);</div><div class="line">	Map clusterConf = Utils.readStormConfig();</div><div class="line">	clusterConf.putAll(Utils.readCommandLineOpts());</div><div class="line">	Nimbus.Client client = NimbusClient.getConfiguredClient(clusterConf).getClient();</div><div class="line">	KillOptions opts = <span class="keyword">new</span> KillOptions();</div><div class="line">	opts.set_wait_secs(<span class="number">0</span>);</div><div class="line">	client.killTopologyWithOpts(<span class="string">"kafka-test"</span>, opts);</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>运行storm消息时，需要把所有依赖jar打到一个jar中，将依赖jar包放入storm结点classpath中也可，但不利于多作业情况。</p>
+</code></pre><h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><pre><code>public static void main(String[] args) throws Exception {
+        // kafka的zk
+    String brokerZKStr = &quot;172.20.86.137:2181,172.20.86.138:2181,172.20.86.139:2181,172.20.76.37:2181,172.20.76.38:2181/jka/cluster1&quot;;
+    String brokerZKPath = &quot;/brokers&quot;;
+    BrokerHosts hosts = new ZkHosts(brokerZKStr, brokerZKPath);
+
+    String topic = &quot;productDetailCal&quot;;
+        // 注册offset的zk
+    String[] offsetServerArr = {&quot;10.190.54.112&quot;,&quot;10.190.54.114&quot;,&quot;10.190.54.115&quot;,&quot;10.190.54.116&quot;,&quot;10.190.54.117&quot;};
+    List&lt;String&gt; offsetZkServerList = new ArrayList&lt;String&gt;();
+    for(String zkServer : offsetServerArr) {
+        offsetZkServerList.add(zkServer);
+    }
+    int offsetZkPort = 22288;
+    //汇报offset信息的root路径
+    String offsetZkRoot = &quot;/abcdef&quot;;
+    //存储该spout id的消费offset信息,譬如以topoName来命名
+    String offsetZkId = UUID.randomUUID().toString();
+    SpoutConfig spoutConfig = new SpoutConfig(hosts, topic, offsetZkRoot, offsetZkId);
+    spoutConfig.zkServers = offsetZkServerList;
+    spoutConfig.zkPort = offsetZkPort;
+
+    Config conf = new Config();
+    conf.setNumAckers(0);
+    conf.setNumWorkers(4);
+
+    TopologyBuilder builder = new TopologyBuilder();
+    builder.setSpout(&quot;kafkaSpout&quot;, new KafkaSpout(spoutConfig), 16);
+    builder.setBolt(&quot;hello&quot;, new HelloKafkaBolt(), 8).shuffleGrouping(&quot;kafkaSpout&quot;);
+
+    StormSubmitter.submitTopology(&quot;kafka-test&quot;, conf, builder.createTopology());
+    Thread.sleep(60000);
+    Map clusterConf = Utils.readStormConfig();
+    clusterConf.putAll(Utils.readCommandLineOpts());
+    Nimbus.Client client = NimbusClient.getConfiguredClient(clusterConf).getClient();
+    KillOptions opts = new KillOptions();
+    opts.set_wait_secs(0);
+    client.killTopologyWithOpts(&quot;kafka-test&quot;, opts);
+}
+</code></pre><h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>运行storm消息时，需要把所有依赖jar打到一个jar中，将依赖jar包放入storm结点classpath中也可，但不利于多作业情况。</p>
 
           
         
@@ -442,35 +1380,180 @@
         
           
             <h1 id="Storm简介"><a href="#Storm简介" class="headerlink" title="Storm简介"></a>Storm简介</h1><p>storm是twitter开源的实时计算框架，官网地址为 <a href="http://storm.apache.org/index.html。" target="_blank" rel="external">http://storm.apache.org/index.html。</a> 官网介绍单结点每秒可以处理百万Tuple。</p>
-<h2 id="集群搭建步骤"><a href="#集群搭建步骤" class="headerlink" title="集群搭建步骤"></a>集群搭建步骤</h2><ol>
-<li>Set up a Zookeeper cluster</li>
-<li>Install dependencies on Nimbus and worker machines</li>
-<li>Download and extract a Storm release to Nimbus and worker machines</li>
-<li>Fill in mandatory configurations into storm.yaml</li>
-<li>Launch daemons under supervision using “storm” script and a supervisor of your choice</li>
-</ol>
-<h3 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h3><p>Storm集群依赖Zookeeper资源调度，所以首先需要搭建一个Zookeeper集群。<br>Storm运行环境需要安装</p>
-<ol>
-<li>jdk 7</li>
-<li>python 2.6.6</li>
-</ol>
-<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>将storm包解压，conf目录下的storm.yaml即为配置文件。<br> storm.cluster.mode: “distributed”<br> storm.zookeeper.servers:</p>
-<pre><code>- &quot;10.191.41.195&quot;
-- &quot;10.191.86.146&quot;
-- &quot;10.191.87.239&quot;
-- &quot;10.187.55.191&quot;
-- &quot;10.187.55.192&quot;
-</code></pre><p> nimbus.seeds: [“10.187.111.29”]<br> storm.local.dir: “/export/servers/apache-storm-1.0.1/localdir”<br> supervisor.slots.ports:</p>
-<pre><code>- 6700
-- 6701
-- 6702
-- 6703
-</code></pre><p>配置文件必须准备yaml语法，参数项起始有空格。<br>所有配置项见<a href="https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml" target="_blank" rel="external">https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml</a><br>一般还需要配置nimbus\supervisor\worker的jvm参数。</p>
-<h3 id="启停"><a href="#启停" class="headerlink" title="启停"></a>启停</h3><p>在/etc/profile添加 STORM_HOME 变量， bin目录加到PATH中<br>storm nimbus<br>storm supervisor<br>storm ui   </p>
-<p>kill `ps aux | egrep ‘(daemon.nimbus)|(storm.ui.core)’ | fgrep -v egrep | awk ‘{print $2}’`<br>kill `ps aux | fgrep storm | fgrep -v ‘fgrep’ | awk ‘{print $2}’`</p>
-<h3 id="配置HOST"><a href="#配置HOST" class="headerlink" title="配置HOST"></a>配置HOST</h3><p>storm中supervisor和nimbus的通信采用的是HOST，而非ip, 如果不配置HOST，进程间无法通信，会抛出异常。<br>java.net.UnknownHostException: host-10-187-111-29<br>    at org.apache.storm.security.auth.TBackoffConnect.retryNext(TBackoffConnect.java:64)<br>    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:56)<br>    at org.apache.storm.security.auth.ThriftClient.reconnect(ThriftClient.java:99)<br>    at org.apache.storm.security.auth.ThriftClient.<init>(ThriftClient.java:69)<br>    at org.apache.storm.utils.NimbusClient.<init>(NimbusClient.java:106)<br>    at org.apache.storm.utils.NimbusClient.getConfiguredClientAs(NimbusClient.java:78)<br>    at org.apache.storm.command.list$_main.invoke(list.clj:22)<br>    at clojure.lang.AFn.applyToHelper(AFn.java:152)<br>    at clojure.lang.AFn.applyTo(AFn.java:144)<br>    at org.apache.storm.command.list.main(Unknown Source)<br>Caused by: org.apache.storm.thrift.transport.TTransportException: java.net.UnknownHostException: host-10-187-111-29<br>    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:226)<br>    at org.apache.storm.thrift.transport.TFramedTransport.open(TFramedTransport.java:81)<br>    at org.apache.storm.security.auth.SimpleTransportPlugin.connect(SimpleTransportPlugin.java:103)<br>    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:53)<br>    … 8 more<br>Caused by: java.net.UnknownHostException: host-10-187-111-29<br>    at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)<br>    at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)<br>    at java.net.Socket.connect(Socket.java:579)<br>    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:221)<br>    … 11 more</init></init></p>
-<p>vi /etc/hosts<br>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6<br>10.187.111.29 host-10-187-111-29<br>10.187.111.32 host-10-187-111-32<br>10.187.111.35 host-10-187-111-35<br>10.187.111.29 host-10-187-111-29<br>10.187.111.34 host-10-187-111-34 </p>
-<h3 id="WEB-UI"><a href="#WEB-UI" class="headerlink" title="WEB UI"></a>WEB UI</h3><p>storm提供web页面展示集群信息，默认端口是8080</p>
+<h2 id="集群搭建步骤"><a href="#集群搭建步骤" class="headerlink" title="集群搭建步骤"></a>集群搭建步骤</h2><pre><code>1. Set up a Zookeeper cluster
+2. Install dependencies on Nimbus and worker machines
+3. Download and extract a Storm release to Nimbus and worker machines
+4. Fill in mandatory configurations into storm.yaml
+5. Launch daemons under supervision using &quot;storm&quot; script and a supervisor of your choice
+</code></pre><h3 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h3><p>Storm集群依赖Zookeeper资源调度，所以首先需要搭建一个Zookeeper集群。</p>
+<p>Storm运行环境需要安装。</p>
+<pre><code>1. jdk 7
+2. python 2.6.6
+</code></pre><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><p>将storm包解压，conf目录下的storm.yaml即为配置文件。</p>
+<pre><code>storm.cluster.mode: &quot;distributed&quot;
+storm.zookeeper.servers:
+     - &quot;10.191.41.195&quot;
+     - &quot;10.191.86.146&quot;
+     - &quot;10.191.87.239&quot;
+     - &quot;10.187.55.191&quot;
+     - &quot;10.187.55.192&quot;
+
+nimbus.seeds: [&quot;10.187.111.29&quot;]
+storm.local.dir: &quot;/export/servers/apache-storm-1.0.1/localdir&quot;
+supervisor.slots.ports:
+    - 6700
+    - 6701
+    - 6702
+    - 6703
+</code></pre><p>配置文件必须准备yaml语法，参数项起始有空格。</p>
+<p>所有配置项见<a href="https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml" target="_blank" rel="external">https://github.com/apache/storm/blob/v1.0.1/conf/defaults.yaml</a></p>
+<p>一般还需要配置nimbus\supervisor\worker的jvm参数。</p>
+<h3 id="启停"><a href="#启停" class="headerlink" title="启停"></a>启停</h3><p>在/etc/profile添加 STORM_HOME 变量， bin目录加到PATH中</p>
+<pre><code>storm nimbus        # 启动nimbus
+storm supervisor    # 启动supervisor
+storm ui               # 启动web ui
+
+# kill nimbus
+kill \`ps aux | egrep &apos;(daemon\.nimbus)|(storm\.ui\.core)&apos; | fgrep -v egrep | awk &apos;{print $2}&apos;\` 
+
+# kill supervisor
+kill \`ps aux | fgrep storm | fgrep -v &apos;fgrep&apos; | awk &apos;{print $2}&apos;\`
+</code></pre><h3 id="配置HOST"><a href="#配置HOST" class="headerlink" title="配置HOST"></a>配置HOST</h3><p>storm中supervisor和nimbus的通信采用的是HOST，而非ip, 如果不配置HOST，进程间无法通信，会抛出异常。</p>
+<pre><code>java.net.UnknownHostException: host-10-187-111-29
+    at org.apache.storm.security.auth.TBackoffConnect.retryNext(TBackoffConnect.java:64)
+    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:56)
+    at org.apache.storm.security.auth.ThriftClient.reconnect(ThriftClient.java:99)
+    at org.apache.storm.security.auth.ThriftClient.&lt;init&gt;(ThriftClient.java:69)
+    at org.apache.storm.utils.NimbusClient.&lt;init&gt;(NimbusClient.java:106)
+    at org.apache.storm.utils.NimbusClient.getConfiguredClientAs(NimbusClient.java:78)
+    at org.apache.storm.command.list$_main.invoke(list.clj:22)
+    at clojure.lang.AFn.applyToHelper(AFn.java:152)
+    at clojure.lang.AFn.applyTo(AFn.java:144)
+    at org.apache.storm.command.list.main(Unknown Source)
+Caused by: org.apache.storm.thrift.transport.TTransportException: java.net.UnknownHostException: host-10-187-111-29
+    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:226)
+    at org.apache.storm.thrift.transport.TFramedTransport.open(TFramedTransport.java:81)
+    at org.apache.storm.security.auth.SimpleTransportPlugin.connect(SimpleTransportPlugin.java:103)
+    at org.apache.storm.security.auth.TBackoffConnect.doConnectWithRetry(TBackoffConnect.java:53)
+    ... 8 more
+Caused by: java.net.UnknownHostException: host-10-187-111-29
+    at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)
+    at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+    at java.net.Socket.connect(Socket.java:579)
+    at org.apache.storm.thrift.transport.TSocket.open(TSocket.java:221)
+    ... 11 more
+</code></pre><hr>
+<pre><code>vi /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+10.187.111.29 host-10-187-111-29
+10.187.111.32 host-10-187-111-32 
+10.187.111.35 host-10-187-111-35 
+10.187.111.29 host-10-187-111-29 
+10.187.111.34 host-10-187-111-34 
+</code></pre><h3 id="WEB-UI"><a href="#WEB-UI" class="headerlink" title="WEB UI"></a>WEB UI</h3><p>storm提供web页面展示集群信息，默认端口是8080</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/19/hello-world/" itemprop="url">
+                  Hello World
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-19T10:52:32+08:00" content="2016-07-19">
+              2016-07-19
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
 
           
         
@@ -540,7 +1623,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -550,7 +1633,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

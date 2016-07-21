@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="storm,kafka," />
+  <meta name="keywords" content="storm,zookeeper," />
 
 
 
@@ -84,25 +84,28 @@
 
 
 
-<meta name="description" content="参考资料官网 http://storm.apache.org/releases/1.0.1/storm-kafka.html 博客 http://www.tuicool.com/articles/f6RVvq 
-pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
-
-&amp;lt;groupId&amp;gt;storm-study&amp;lt;/groupId&amp;">
+<meta name="description" content="/-{storm-zk-root}           -- storm在zookeeper上的根目录(默认为/storm)
+  |-/assignments            -- topology的任务分配信息
+  |   |
+  |   |-/{topology-id}      --  这个目录保存的是每个topology的assignments信息包括：对应的nimbus上
+  |">
 <meta property="og:type" content="article">
-<meta property="og:title" content="storm集成kafka">
-<meta property="og:url" content="http://yoursite.com/2016/07/20/storm集成kafka/index.html">
+<meta property="og:title" content="storm在zookeeper上结点信息">
+<meta property="og:url" content="http://yoursite.com/2016/07/21/storm在zookeeper上结点信息/index.html">
 <meta property="og:site_name" content="Lova">
-<meta property="og:description" content="参考资料官网 http://storm.apache.org/releases/1.0.1/storm-kafka.html 博客 http://www.tuicool.com/articles/f6RVvq 
-pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
-
-&amp;lt;groupId&amp;gt;storm-study&amp;lt;/groupId&amp;">
-<meta property="og:updated_time" content="2016-07-21T07:45:04.000Z">
+<meta property="og:description" content="/-{storm-zk-root}           -- storm在zookeeper上的根目录(默认为/storm)
+  |-/assignments            -- topology的任务分配信息
+  |   |
+  |   |-/{topology-id}      --  这个目录保存的是每个topology的assignments信息包括：对应的nimbus上
+  |">
+<meta property="og:updated_time" content="2016-07-21T07:30:26.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="storm集成kafka">
-<meta name="twitter:description" content="参考资料官网 http://storm.apache.org/releases/1.0.1/storm-kafka.html 博客 http://www.tuicool.com/articles/f6RVvq 
-pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
-
-&amp;lt;groupId&amp;gt;storm-study&amp;lt;/groupId&amp;">
+<meta name="twitter:title" content="storm在zookeeper上结点信息">
+<meta name="twitter:description" content="/-{storm-zk-root}           -- storm在zookeeper上的根目录(默认为/storm)
+  |-/assignments            -- topology的任务分配信息
+  |   |
+  |   |-/{topology-id}      --  这个目录保存的是每个topology的assignments信息包括：对应的nimbus上
+  |">
 
 
 
@@ -120,7 +123,7 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
   };
 </script>
 
-  <title> storm集成kafka | Lova </title>
+  <title> storm在zookeeper上结点信息 | Lova </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -240,7 +243,7 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
             
             
               
-                storm集成kafka
+                storm在zookeeper上结点信息
               
             
           </h1>
@@ -252,8 +255,8 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-20T19:47:12+08:00" content="2016-07-20">
-              2016-07-20
+            <time itemprop="dateCreated" datetime="2016-07-21T11:36:48+08:00" content="2016-07-21">
+              2016-07-21
             </time>
           </span>
 
@@ -280,119 +283,44 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
       
 
       
-        <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>官网 <a href="http://storm.apache.org/releases/1.0.1/storm-kafka.html" target="_blank" rel="external">http://storm.apache.org/releases/1.0.1/storm-kafka.html</a> <br><br>博客 <a href="http://www.tuicool.com/articles/f6RVvq" target="_blank" rel="external">http://www.tuicool.com/articles/f6RVvq</a> <br></p>
-<h1 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h1><pre><code>&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-&lt;groupId&gt;storm-study&lt;/groupId&gt;
-&lt;artifactId&gt;word-count&lt;/artifactId&gt;
-&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-&lt;packaging&gt;jar&lt;/packaging&gt;
-
-&lt;name&gt;word-count&lt;/name&gt;
-&lt;url&gt;http://maven.apache.org&lt;/url&gt;
-
-&lt;properties&gt;
-    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-&lt;/properties&gt;
-
-&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.apache.storm&lt;/groupId&gt;
-        &lt;artifactId&gt;storm-core&lt;/artifactId&gt;
-        &lt;version&gt;1.0.1&lt;/version&gt;
-        &lt;scope&gt;provided&lt;/scope&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.apache.storm&lt;/groupId&gt;
-        &lt;artifactId&gt;storm-kafka&lt;/artifactId&gt;
-        &lt;version&gt;1.0.1&lt;/version&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
-        &lt;artifactId&gt;kafka_2.9.2&lt;/artifactId&gt;
-        &lt;version&gt;0.8.1.1&lt;/version&gt;
-        &lt;exclusions&gt;
-            &lt;exclusion&gt;
-                &lt;groupId&gt;org.apache.zookeeper&lt;/groupId&gt;
-                &lt;artifactId&gt;zookeeper&lt;/artifactId&gt;
-            &lt;/exclusion&gt;
-            &lt;exclusion&gt;
-                &lt;groupId&gt;log4j&lt;/groupId&gt;
-                &lt;artifactId&gt;log4j&lt;/artifactId&gt;
-            &lt;/exclusion&gt;
-        &lt;/exclusions&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;
-
-&lt;build&gt;
-    &lt;sourceDirectory&gt;src/main/java&lt;/sourceDirectory&gt;
-    &lt;finalName&gt;word-count&lt;/finalName&gt;
-    &lt;plugins&gt;
-        &lt;plugin&gt;
-            &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-            &lt;configuration&gt;
-                &lt;descriptorRefs&gt;
-                    &lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
-                &lt;/descriptorRefs&gt;
-                &lt;archive&gt;
-                    &lt;manifest&gt;
-                        &lt;mainClass /&gt;
-                    &lt;/manifest&gt;
-                &lt;/archive&gt;
-            &lt;/configuration&gt;
-            &lt;executions&gt;
-                &lt;execution&gt;
-                    &lt;id&gt;make-assembly&lt;/id&gt;
-                    &lt;phase&gt;package&lt;/phase&gt;
-                    &lt;goals&gt;
-                        &lt;goal&gt;single&lt;/goal&gt;
-                    &lt;/goals&gt;
-                &lt;/execution&gt;
-            &lt;/executions&gt;
-        &lt;/plugin&gt;
-    &lt;/plugins&gt;
-&lt;/build&gt;
-</code></pre><h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><pre><code>public static void main(String[] args) throws Exception {
-        // kafka的zk
-    String brokerZKStr = &quot;172.20.86.137:2181,172.20.86.138:2181,172.20.86.139:2181,172.20.76.37:2181,172.20.76.38:2181/jka/cluster1&quot;;
-    String brokerZKPath = &quot;/brokers&quot;;
-    BrokerHosts hosts = new ZkHosts(brokerZKStr, brokerZKPath);
-
-    String topic = &quot;productDetailCal&quot;;
-        // 注册offset的zk
-    String[] offsetServerArr = {&quot;10.190.54.112&quot;,&quot;10.190.54.114&quot;,&quot;10.190.54.115&quot;,&quot;10.190.54.116&quot;,&quot;10.190.54.117&quot;};
-    List&lt;String&gt; offsetZkServerList = new ArrayList&lt;String&gt;();
-    for(String zkServer : offsetServerArr) {
-        offsetZkServerList.add(zkServer);
-    }
-    int offsetZkPort = 22288;
-    //汇报offset信息的root路径
-    String offsetZkRoot = &quot;/abcdef&quot;;
-    //存储该spout id的消费offset信息,譬如以topoName来命名
-    String offsetZkId = UUID.randomUUID().toString();
-    SpoutConfig spoutConfig = new SpoutConfig(hosts, topic, offsetZkRoot, offsetZkId);
-    spoutConfig.zkServers = offsetZkServerList;
-    spoutConfig.zkPort = offsetZkPort;
-
-    Config conf = new Config();
-    conf.setNumAckers(0);
-    conf.setNumWorkers(4);
-
-    TopologyBuilder builder = new TopologyBuilder();
-    builder.setSpout(&quot;kafkaSpout&quot;, new KafkaSpout(spoutConfig), 16);
-    builder.setBolt(&quot;hello&quot;, new HelloKafkaBolt(), 8).shuffleGrouping(&quot;kafkaSpout&quot;);
-
-    StormSubmitter.submitTopology(&quot;kafka-test&quot;, conf, builder.createTopology());
-    Thread.sleep(60000);
-    Map clusterConf = Utils.readStormConfig();
-    clusterConf.putAll(Utils.readCommandLineOpts());
-    Nimbus.Client client = NimbusClient.getConfiguredClient(clusterConf).getClient();
-    KillOptions opts = new KillOptions();
-    opts.set_wait_secs(0);
-    client.killTopologyWithOpts(&quot;kafka-test&quot;, opts);
-}
-</code></pre><h1 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h1><p>运行storm消息时，需要把所有依赖jar打到一个jar中，将依赖jar包放入storm结点classpath中也可，但不利于多作业情况。</p>
-
+        <pre><code>/-{storm-zk-root}           -- storm在zookeeper上的根目录(默认为/storm)
+  |-/assignments            -- topology的任务分配信息
+  |   |
+  |   |-/{topology-id}      --  这个目录保存的是每个topology的assignments信息包括：对应的nimbus上
+  |                         --  的代码目录,所有task的启动时间,每个task与机器、端口的映射。操作为
+  |                         --  (assignments)来获取所有assignments的值；以及(assignment-info storm-id)
+  |                         --  来得到给定的storm-id对应的AssignmentInfo信息
+  |                         --  在AssignmentInfo中存储的内容有:
+  |                         --  :executor-&gt;node+port :executor-&gt;start-time-secs :node-&gt;host
+  |                         --  具体定义在common.clj中的
+  |                         --  (defrecord Assignment[master-code-dir node-&gt;host executor-&gt;node+port executor-&gt;start-time-secs])                        
+  |-/storms                 -- 这个目录保存所有正在运行的topology的id
+  |   |
+  |   |
+  |   |-/{topology-id}      -- 这个文件保存这个topology的一些信息，包括topology的名字，topology开始运行
+  |                         -- 的时间以及这个topology的状态。操作(active-storms),获得当前路径活跃的下
+  |                         -- topology数据。保存的内容参考类StormBase；(storm-base storm-id)得到给定的
+  |                         -- storm-id下的StormBase数据,具体定义在common.clj中的
+  |                          -- (defrecord StormBase [storm-name launch-time-secs status num-workers component-&gt;executors])
+  |-/supervisors            -- 这个目录保存所有的supervisor的心跳信息
+  |   |-/{supervisor-id}    -- 这个文件保存supervisor的心跳信息包括:心跳时间，主机名，这个supervisor上
+  |                         -- worker的端口号，运行时间(具体看SupervisorInfo类)。操作(supervisors)得到
+  |                         -- 所有的supervisors节点；(supervisor-info supervisor-id)得到给定的
+  |                         -- supervisor-id对应的SupervisorInfo信息；具体定义在common.clj中的
+  |                           -- (defrecord SupervisorInfo [time-secs hostname assignment-id used-ports meta scheduler-meta uptime-secs])
+  |-/workerbeats                    -- 所有worker的心跳
+  |   |-/{topology-id}              -- 这个目录保存这个topology的所有的worker的心跳信息
+  |       |-/{supervisorId-port}    -- worker的心跳信息，包括心跳的时间，worker运行时间以及一些统计信息
+  |                                 -- 操作(heartbeat-storms)得到所有有心跳数据的topology，
+  |                                 -- (get-worker-heartbeat storm-id node port)得到具体一个topology下
+  |                                 -- 的某个worker(node:port)的心跳状况，
+  |                                 -- (executor-beats storm-id executor-&gt;node+port)得到一个executor的心跳状况
+  |-/errors                  -- 所有产生的error信息
+  |-/{topology-id}           -- 这个目录保存这个topology下面的错误信息。操作(error-topologies)得到出错
+      |                      -- 的topology；(errors storm-id component-id)得到
+      |                      -- 给定的storm-id component-id下的出错信息
+      |-/{component-id}
+</code></pre>
       
     </div>
 
@@ -415,7 +343,7 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
           
             <a href="/tags/storm/" rel="tag">#storm</a>
           
-            <a href="/tags/kafka/" rel="tag">#kafka</a>
+            <a href="/tags/zookeeper/" rel="tag">#zookeeper</a>
           
         </div>
       
@@ -424,16 +352,16 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/19/storm集群搭建/" rel="next" title="storm集群搭建">
-                <i class="fa fa-chevron-left"></i> storm集群搭建
+              <a href="/2016/07/20/storm集成kafka/" rel="next" title="storm集成kafka">
+                <i class="fa fa-chevron-left"></i> storm集成kafka
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/07/21/storm在zookeeper上结点信息/" rel="prev" title="storm在zookeeper上结点信息">
-                storm在zookeeper上结点信息 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/07/21/storm配置项说明/" rel="prev" title="storm配置项说明">
+                storm配置项说明 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -541,7 +469,7 @@ pom.xml&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pom-xml"><span class="nav-number">2.</span> <span class="nav-text">pom.xml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#说明"><span class="nav-number">4.</span> <span class="nav-text">说明</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
         </section>
